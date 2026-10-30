@@ -1,0 +1,167 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Daily Expense Tracker</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
+    <script src="js/storage.js" defer></script>
+    <script src="js/calculations.js" defer></script>
+    <script src="js/charts.js" defer></script>
+    <script src="js/app.js" defer></script>
+</head>
+<body data-theme="light">
+    <div class="app-container">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h1 class="app-title"><span class="app-icon">💰</span> Expense Tracker</h1>
+                <button class="sidebar-close mobile-only" id="sidebar-close">×</button>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-section="dashboard"><span class="nav-icon">📊</span> Dashboard</a>
+                <a href="#" class="nav-item" data-section="expenses"><span class="nav-icon">💸</span> Expenses</a>
+                <a href="#" class="nav-item" data-section="income"><span class="nav-icon">💵</span> Income</a>
+                <a href="#" class="nav-item" data-section="budget"><span class="nav-icon">🎯</span> Budget</a>
+                <a href="#" class="nav-item" data-section="analytics"><span class="nav-icon">📈</span> Analytics</a>
+            </nav>
+        </aside>
+        <div class="sidebar-overlay mobile-only" id="sidebar-overlay"></div>
+        <main class="main-content">
+            <header class="header">
+                <button class="hamburger mobile-only" id="hamburger">
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                </button>
+                <div class="header-spacer"></div>
+                <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+                    <span class="theme-icon light">☀️</span>
+                    <span class="theme-icon dark">🌙</span>
+                </button>
+            </header>
+            <section id="dashboard" class="section active">
+                <div class="section-header"><h2>Dashboard</h2></div>
+                <div class="metrics-grid">
+                    <div class="metric-card"><div class="metric-icon">📅</div><div><h3>Today</h3><p class="metric-value" id="today-expenses">0</p></div></div>
+                    <div class="metric-card"><div class="metric-icon">📆</div><div><h3>This Week</h3><p class="metric-value" id="week-expenses">0</p></div></div>
+                    <div class="metric-card"><div class="metric-icon">📊</div><div><h3>This Month</h3><p class="metric-value" id="month-expenses">0</p></div></div>
+                    <div class="metric-card"><div class="metric-icon">💵</div><div><h3>Total Income</h3><p class="metric-value" id="total-income">0</p></div></div>
+                    <div class="metric-card"><div class="metric-icon">💳</div><div><h3>Balance</h3><p class="metric-value" id="balance">0</p></div></div>
+                    <div class="metric-card"><div class="metric-icon">🎯</div><div><h3>Budget</h3><p class="metric-value" id="budget-status">0</p></div></div>
+                </div>
+            </section>
+            <section id="expenses" class="section">
+                <div class="section-header"><h2>Expenses</h2></div>
+                <div class="card"><h3>Add Expense</h3>
+                    <form id="expense-form">
+                        <input type="number" id="exp-amount" placeholder="Amount" min="0.01" step="0.01" required>
+                        <select id="exp-category" required>
+                            <option value="">Select Category</option>
+                            <option value="Food">🍔 Food</option>
+                            <option value="Transport">🚗 Transport</option>
+                            <option value="Shopping">🛍️ Shopping</option>
+                            <option value="Bills">📄 Bills</option>
+                            <option value="Health">🏥 Health</option>
+                            <option value="Education">📚 Education</option>
+                            <option value="Entertainment">🎬 Entertainment</option>
+                            <option value="Rent">🏠 Rent</option>
+                            <option value="Groceries">🛒 Groceries</option>
+                            <option value="Other">📍 Other</option>
+                        </select>
+                        <input type="date" id="exp-date" required>
+                        <textarea id="exp-notes" placeholder="Notes..."></textarea>
+                        <div class="form-actions">
+                            <button type="submit">Add Expense</button>
+                            <button type="reset" class="btn-secondary">Clear</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card"><h3>Expense History</h3>
+                    <div class="controls">
+                        <input type="search" id="exp-search" placeholder="Search expenses..." class="search-input">
+                        <select id="exp-category-filter" class="filter-select">
+                            <option value="">All Categories</option>
+                            <option value="Food">Food</option><option value="Transport">Transport</option><option value="Shopping">Shopping</option>
+                            <option value="Bills">Bills</option><option value="Health">Health</option><option value="Education">Education</option>
+                            <option value="Entertainment">Entertainment</option><option value="Rent">Rent</option><option value="Groceries">Groceries</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="table-wrapper">
+                        <table id="exp-table"><thead><tr><th>Date</th><th>Category</th><th>Amount</th><th>Notes</th><th>Action</th></tr></thead><tbody></tbody></table>
+                    </div>
+                </div>
+            </section>
+            <section id="income" class="section">
+                <div class="section-header"><h2>Income</h2></div>
+                <div class="card"><h3>Add Income</h3>
+                    <form id="income-form">
+                        <input type="number" id="inc-amount" placeholder="Amount" min="0.01" step="0.01" required>
+                        <select id="inc-source" required>
+                            <option value="">Select Source</option>
+                            <option value="Salary">💼 Salary</option>
+                            <option value="Freelance">💻 Freelance</option>
+                            <option value="Business">🏢 Business</option>
+                            <option value="Allowance">🎁 Allowance</option>
+                            <option value="Investment">📈 Investment</option>
+                            <option value="Other">📍 Other</option>
+                        </select>
+                        <input type="date" id="inc-date" required>
+                        <textarea id="inc-notes" placeholder="Notes..."></textarea>
+                        <div class="form-actions">
+                            <button type="submit">Add Income</button>
+                            <button type="reset" class="btn-secondary">Clear</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card"><h3>Income History</h3>
+                    <div class="controls">
+                        <input type="search" id="inc-search" placeholder="Search income..." class="search-input">
+                        <select id="inc-source-filter" class="filter-select">
+                            <option value="">All Sources</option>
+                            <option value="Salary">Salary</option><option value="Freelance">Freelance</option><option value="Business">Business</option>
+                            <option value="Allowance">Allowance</option><option value="Investment">Investment</option><option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="table-wrapper">
+                        <table id="inc-table"><thead><tr><th>Date</th><th>Source</th><th>Amount</th><th>Notes</th><th>Action</th></tr></thead><tbody></tbody></table>
+                    </div>
+                </div>
+            </section>
+            <section id="budget" class="section">
+                <div class="section-header"><h2>Budget Management</h2></div>
+                <div class="card"><h3>Set Monthly Budget</h3>
+                    <form id="budget-form">
+                        <input type="number" id="budget-amount" placeholder="Monthly budget amount" min="0" required>
+                        <button type="submit">Set Budget</button>
+                    </form>
+                </div>
+                <div class="card"><h3>Budget Status</h3>
+                    <div class="budget-status">
+                        <div class="progress"><div class="progress-fill" id="budget-fill"></div></div>
+                        <p id="budget-text">No budget set</p>
+                    </div>
+                </div>
+            </section>
+            <section id="analytics" class="section">
+                <div class="section-header"><h2>Analytics & Reports</h2></div>
+                <div class="charts-grid">
+                    <div class="card"><h3>Expenses by Category</h3><canvas id="categoryChart"></canvas></div>
+                    <div class="card"><h3>Daily Trend (30 Days)</h3><canvas id="trendChart"></canvas></div>
+                    <div class="card"><h3>Income vs Expenses</h3><canvas id="comparisonChart"></canvas></div>
+                </div>
+                <div class="card"><h3>Data Management</h3>
+                    <div class="data-actions">
+                        <button id="export-csv" class="btn-outline">📊 Export CSV</button>
+                        <button id="backup-data" class="btn-outline">💾 Backup Data</button>
+                        <button id="restore-data" class="btn-outline">📥 Restore Data</button>
+                    </div>
+                    <input type="file" id="restore-file" accept=".json" hidden>
+                </div>
+            </section>
+        </main>
+    </div>
+    <div class="notification" id="notification"></div>
+</body>
+</html>
